@@ -1,0 +1,5 @@
+asyncpg
+aiokafka
+redis
+elasticsearch[async]
+schedule

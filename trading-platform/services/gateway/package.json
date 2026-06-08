@@ -1,0 +1,20 @@
+{
+  "name": "trading-platform-gateway",
+  "version": "1.0.0",
+  "description": "API Gateway for financial trading platform",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js"
+  },
+  "dependencies": {
+    "compression": "^1.7.4",
+    "cors": "^2.8.5",
+    "express": "^4.21.1",
+    "kafkajs": "^2.2.4",
+    "pino": "^9.5.0",
+    "redis": "^4.7.0",
+    "uuid": "^10.0.0",
+    "ws": "^8.18.0"
+  }
+}

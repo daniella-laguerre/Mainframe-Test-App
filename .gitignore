@@ -1,0 +1,21 @@
+# OS
+.DS_Store
+Thumbs.db
+
+# Backups / archives
+*.zip
+
+# Dependencies
+node_modules/
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+
+# Build output
+dist/
+build/
+
+# Local env overrides (committed sample/template stays)
+.env
+*.log

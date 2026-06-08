@@ -1,0 +1,8 @@
+fastapi
+uvicorn
+asyncpg
+aiokafka
+redis
+pydantic
+numpy
+httpx

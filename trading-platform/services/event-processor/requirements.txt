@@ -1,0 +1,5 @@
+aiokafka
+asyncpg
+redis
+elasticsearch[async]
+httpx

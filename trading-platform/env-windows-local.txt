@@ -1,0 +1,230 @@
+# ============================================================
+# Trading Platform - Environment Variables for Local Windows Setup
+# ============================================================
+# All Docker service hostnames (kafka, postgres, redis, etc.)
+# are replaced with "localhost" since everything runs on one machine.
+#
+# Usage:
+#   - Set these in your Windows System Environment Variables, or
+#   - Use a .env loader, or
+#   - Set them per terminal session before starting each service.
+#
+# PowerShell example:
+#   $env:DATABASE_URL = "postgresql://trading:trading123@localhost:5432/trading"
+#
+# CMD example:
+#   set DATABASE_URL=postgresql://trading:trading123@localhost:5432/trading
+# ============================================================
+
+
+# ============================================================
+# Infrastructure Configuration
+# ============================================================
+
+# --- Zookeeper (port 2181) ---
+ZOOKEEPER_CLIENT_PORT=2181
+ZOOKEEPER_TICK_TIME=2000
+
+# --- Kafka (ports 9092, 29092) ---
+KAFKA_BROKER_ID=1
+KAFKA_ZOOKEEPER_CONNECT=localhost:2181
+KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://localhost:29092,PLAINTEXT_HOST://localhost:9092
+KAFKA_LISTENER_SECURITY_PROTOCOL_MAP=PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+KAFKA_INTER_BROKER_LISTENER_NAME=PLAINTEXT
+KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR=1
+KAFKA_NUM_PARTITIONS=12
+KAFKA_AUTO_CREATE_TOPICS_ENABLE=true
+KAFKA_LOG_RETENTION_MS=3600000
+KAFKA_MESSAGE_MAX_BYTES=10485760
+
+# --- PostgreSQL Primary (port 5432) ---
+POSTGRES_DB=trading
+POSTGRES_USER=trading
+POSTGRES_PASSWORD=trading123
+
+# --- PostgreSQL Replica (port 5433) ---
+# Same credentials as primary, runs on port 5433
+
+# --- Redis (port 6379) ---
+# Start with: redis-server --maxmemory 256mb --maxmemory-policy allkeys-lru
+
+# --- Elasticsearch (port 9200) ---
+discovery.type=single-node
+xpack.security.enabled=false
+ES_JAVA_OPTS=-Xms512m -Xmx512m
+cluster.routing.allocation.disk.threshold_enabled=false
+
+
+# ============================================================
+# Service: API Gateway (Node.js - port 3000)
+# Directory: services/gateway
+# Start: npm install && node src/index.js
+# ============================================================
+PORT=3000
+ORDER_SERVICE_URL=http://localhost:8001
+QUOTE_SERVICE_URL=http://localhost:8002
+ANALYTICS_SERVICE_URL=http://localhost:8003
+RISK_ENGINE_URL=http://localhost:8004
+KAFKA_BROKERS=localhost:9092
+REDIS_URL=redis://localhost:6379
+
+
+# ============================================================
+# Service: Order Service (Python/FastAPI - port 8001)
+# Directory: services/order-service
+# Start: pip install -r requirements.txt && uvicorn main:app --host 0.0.0.0 --port 8001
+# ============================================================
+PORT=8001
+DATABASE_URL=postgresql://trading:trading123@localhost:5432/trading
+KAFKA_BROKERS=localhost:9092
+REDIS_URL=redis://localhost:6379
+QUOTE_SERVICE_URL=http://localhost:8002
+RISK_ENGINE_URL=http://localhost:8004
+
+
+# ============================================================
+# Service: Quote Service (Go - port 8002)
+# Directory: services/quote-service
+# Start: go build -o quote-service . && .\quote-service.exe
+# ============================================================
+PORT=8002
+KAFKA_BROKERS=localhost:9092
+REDIS_URL=localhost:6379
+
+
+# ============================================================
+# Service: Analytics (Python/FastAPI - port 8003)
+# Directory: services/analytics
+# Start: pip install -r requirements.txt && uvicorn main:app --host 0.0.0.0 --port 8003
+# ============================================================
+PORT=8003
+DATABASE_URL=postgresql://trading:trading123@localhost:5432/trading
+ELASTICSEARCH_URL=http://localhost:9200
+KAFKA_BROKERS=localhost:9092
+REDIS_URL=redis://localhost:6379
+
+
+# ============================================================
+# Service: Risk Engine (Python/FastAPI - port 8004)
+# Directory: services/risk-engine
+# Start: pip install -r requirements.txt && uvicorn main:app --host 0.0.0.0 --port 8004
+# ============================================================
+PORT=8004
+DATABASE_URL=postgresql://trading:trading123@localhost:5432/trading
+KAFKA_BROKERS=localhost:9092
+REDIS_URL=redis://localhost:6379
+
+
+# ============================================================
+# Service: Event Processor (Python - no exposed port)
+# Directory: services/event-processor
+# Start: pip install -r requirements.txt && python main.py
+# ============================================================
+KAFKA_BROKERS=localhost:9092
+DATABASE_URL=postgresql://trading:trading123@localhost:5432/trading
+REDIS_URL=redis://localhost:6379
+ELASTICSEARCH_URL=http://localhost:9200
+
+
+# ============================================================
+# Service: Legacy Adapter (Python - no exposed port)
+# Directory: services/legacy-adapter
+# Start: pip install -r requirements.txt && python main.py
+# ============================================================
+KAFKA_BROKERS=localhost:9092
+MQ_STYLE=ibm-mq
+
+
+# ============================================================
+# Service: Market Data Simulator (Go - no exposed port)
+# Directory: services/market-data-sim
+# Start: go build -o market-data-sim . && .\market-data-sim.exe
+# ============================================================
+KAFKA_BROKERS=localhost:9092
+REDIS_URL=localhost:6379
+TICK_INTERVAL_MS=100
+
+
+# ============================================================
+# Service: Batch Reconciler (Python - no exposed port)
+# Directory: services/batch-reconciler
+# Start: pip install -r requirements.txt && python main.py
+# ============================================================
+DATABASE_URL=postgresql://trading:trading123@localhost:5432/trading
+KAFKA_BROKERS=localhost:9092
+ELASTICSEARCH_URL=http://localhost:9200
+REDIS_URL=redis://localhost:6379
+RECONCILIATION_INTERVAL=300
+
+
+# ============================================================
+# Service: Traffic Generator (Python - no exposed port)
+# Directory: traffic-generator
+# Start: pip install -r requirements.txt && python main.py
+# ============================================================
+GATEWAY_URL=http://localhost:3000
+KAFKA_BROKERS=localhost:9092
+TARGET_RPS=500
+BURST_MULTIPLIER=10
+CHAOS_ENABLED=true
+
+
+# ============================================================
+# Service: Trading UI (React/Vite - port 8080)
+# Directory: services/ui
+# Start (dev): npm install && npm run dev -- --port 8080
+# Start (prod): npm run build && serve the dist/ folder on port 8080
+# ============================================================
+# The UI connects to the gateway at http://localhost:3000
+# Check the UI source for the gateway URL config (likely VITE_API_URL or similar)
+VITE_API_URL=http://localhost:3000
+VITE_WS_URL=ws://localhost:3000
+
+
+# ============================================================
+# Port Summary
+# ============================================================
+# Zookeeper:     2181
+# Kafka:         9092 (host), 29092 (inter-broker)
+# PostgreSQL:    5432 (primary), 5433 (replica)
+# Redis:         6379
+# Elasticsearch: 9200
+# Gateway:       3000
+# Order Service: 8001
+# Quote Service: 8002
+# Analytics:     8003
+# Risk Engine:   8004
+# Trading UI:    8080
+
+
+# ============================================================
+# Startup Order (respect dependencies)
+# ============================================================
+# Phase 1: Zookeeper
+# Phase 2: Kafka (needs Zookeeper)
+# Phase 3: PostgreSQL, Redis, Elasticsearch (independent)
+# Phase 4: PostgreSQL Replica (needs PostgreSQL)
+# Phase 5: quote-service, market-data-sim (need Kafka, Redis)
+# Phase 6: order-service, risk-engine (need Postgres, Kafka, Redis)
+# Phase 7: analytics, event-processor (need Postgres, Kafka, Elasticsearch)
+# Phase 8: legacy-adapter, batch-reconciler (need Kafka)
+# Phase 9: gateway (needs all core services)
+# Phase 10: ui, traffic-generator (need gateway)
+
+
+# ============================================================
+# Notes
+# ============================================================
+# - KAFKA_BROKERS: Services use port 9092 (the host-facing listener)
+#   when running locally, not 29092 (the Docker inter-container listener).
+#
+# - REDIS_URL: The Go services (quote-service, market-data-sim) use
+#   "localhost:6379" format (no redis:// prefix). The Python/Node
+#   services use "redis://localhost:6379" format.
+#
+# - DATABASE_URL: Run configs/postgres/init.sql against your local
+#   PostgreSQL instance to create the schema:
+#     psql -U trading -d trading -f configs\postgres\init.sql
+#
+# - Each Python service should ideally run in its own virtual environment
+#   to avoid dependency conflicts.

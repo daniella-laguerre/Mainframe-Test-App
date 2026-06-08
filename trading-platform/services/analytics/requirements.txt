@@ -1,0 +1,9 @@
+fastapi
+uvicorn
+asyncpg
+aiokafka
+redis
+pydantic
+numpy
+elasticsearch[async]
+httpx
