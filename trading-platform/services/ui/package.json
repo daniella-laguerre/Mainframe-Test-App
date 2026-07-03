@@ -15,5 +15,8 @@
   "devDependencies": {
     "@vitejs/plugin-react": "^4.3.4",
     "vite": "^6.0.0"
-  }
+  },
+  "author": "Daniella LaGuerre",
+  "license": "UNLICENSED",
+  "copyright": "© 2026 Daniella LaGuerre. All rights reserved. Published 2026-07-03."
 }

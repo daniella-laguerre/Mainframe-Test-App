@@ -16,5 +16,8 @@
     "redis": "^4.7.0",
     "uuid": "^10.0.0",
     "ws": "^8.18.0"
-  }
+  },
+  "author": "Daniella LaGuerre",
+  "license": "UNLICENSED",
+  "copyright": "© 2026 Daniella LaGuerre. All rights reserved. Published 2026-07-03."
 }
